@@ -1,9 +1,10 @@
 package main
 
 import (
+	"testing"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestHandler(t *testing.T) {
@@ -13,14 +14,9 @@ func TestHandler(t *testing.T) {
 		err     error
 	}{
 		{
-			request: events.APIGatewayProxyRequest{Body: "Paul"},
-			expect:  "Hello Paul",
-			err:     nil,
-		},
-		{
 			request: events.APIGatewayProxyRequest{Body: ""},
-			expect:  "",
-			err:     ErrNameNotProvided,
+			expect:  "Hello World",
+			err:     nil,
 		},
 	}
 

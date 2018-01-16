@@ -1,26 +1,19 @@
 package main
 
 import (
-	"errors"
+	"log"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"log"
 )
 
-var (
-	ErrNameNotProvided = errors.New("no name was provided in the HTTP body")
-)
-
+// Handler Main handler function called by AWS Lambda.
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	log.Printf("Processing Lambda request %s\n", request.RequestContext.RequestID)
 
-	if len(request.Body) < 1 {
-		return events.APIGatewayProxyResponse{}, ErrNameNotProvided
-	}
-
 	return events.APIGatewayProxyResponse{
-		Body:       "Hello " + request.Body,
+		Body:       "Hello World",
 		StatusCode: 200,
 	}, nil
 
