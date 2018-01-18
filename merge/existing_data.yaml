@@ -1,0 +1,8 @@
+
+# data file contains one measurement per line
+
+123456789 service1,123,200 service2,true,123,201 service3,123,500 service4,-1,-1    // everything up except service4
+123456790 service1,123,200 service2,true,123,201 service3,123,500 service4,-1,-1    // same
+123456791 service1,123,200 service2,true,123,201 service3,123,200 service4,123,200  // service4 recovered
+123456792 service1,123,200 service2,true,123,201 service3,123,200 service4,-1,-1    // service4 down again
+123456793 service1,123,200 service2,true,123,201 service3,123,200 service4,123,200  // service4 recovered again
