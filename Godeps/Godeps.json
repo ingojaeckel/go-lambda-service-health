@@ -1,0 +1,42 @@
+{
+	"ImportPath": "github.com/ingojaeckel/go-lambda-service-health",
+	"GoVersion": "go1.9",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/aws/aws-lambda-go/events",
+			"Comment": "v1.0.1",
+			"Rev": "6e2e37798efbb1dfd8e9c6681702e683a6046517"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-lambda-go/lambda",
+			"Comment": "v1.0.1",
+			"Rev": "6e2e37798efbb1dfd8e9c6681702e683a6046517"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-lambda-go/lambda/messages",
+			"Comment": "v1.0.1",
+			"Rev": "6e2e37798efbb1dfd8e9c6681702e683a6046517"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-lambda-go/lambdacontext",
+			"Comment": "v1.0.1",
+			"Rev": "6e2e37798efbb1dfd8e9c6681702e683a6046517"
+		},
+		{
+			"ImportPath": "github.com/davecgh/go-spew/spew",
+			"Comment": "v1.1.0-9-gecdeabc",
+			"Rev": "ecdeabc65495df2dec95d7c4a4c3e021903035e5"
+		},
+		{
+			"ImportPath": "github.com/pmezard/go-difflib/difflib",
+			"Comment": "v1.0.0",
+			"Rev": "792786c7400a136282c1664665ae0a8db921c6c2"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/assert",
+			"Comment": "v1.2.0-4-g87b1dfb",
+			"Rev": "87b1dfb5b2fa649f52695dd9eae19abe404a4308"
+		}
+	]
+}
