@@ -37,6 +37,10 @@
 			"ImportPath": "github.com/stretchr/testify/assert",
 			"Comment": "v1.2.0-4-g87b1dfb",
 			"Rev": "87b1dfb5b2fa649f52695dd9eae19abe404a4308"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "d670f9405373e636a5a2765eea47fac0c9bc91a4"
 		}
 	]
 }

@@ -1,0 +1,8 @@
+timeout: 5
+reports:
+  - s3bucket: all-reports
+services:
+  - name: foo
+    url: http://example.com
+  - name: bar
+    url: http://foo.com

@@ -1,17 +1,17 @@
 package status
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/ingojaeckel/go-lambda-service-health/config"
 )
 
-func CheckResponseTime(c ServiceConfiguration, out chan<- TimedResult) {
-	fmt.Printf("checking response time for service %s @ %s\n", c.Name, c.URL)
+func CheckResponseTime(configuration *config.Configuration, c ServiceConfiguration, out chan<- TimedResult) {
+	log.Printf("checking response time for service %s @ %s\n", c.Name, c.URL)
 
-	timeout := time.Duration(config.TimeoutSeconds * time.Second)
+	timeout := time.Duration(5 * time.Second)
 	client := http.Client{Timeout: timeout}
 	before := time.Now().UnixNano()
 	resp, err := client.Get(c.URL)
@@ -30,7 +30,7 @@ func isSuccess(resp *http.Response, err error) bool {
 }
 
 func getStatusCode(resp *http.Response, err error) int {
-	if err != nil && resp != nil {
+	if err == nil && resp != nil {
 		return resp.StatusCode
 	}
 	return -1
