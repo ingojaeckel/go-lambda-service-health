@@ -17,6 +17,13 @@ type Configuration struct {
 	S3KeyData string `yaml:"s3keyData"`
 	// Folder & file name within the s3 bucket where the report will be stored.
 	S3KeyReport string `yaml:"s3KeyReport"`
+
+	Services []ServiceConfiguration `yaml:"services"`
+}
+
+type ServiceConfiguration struct {
+	Name string `yaml:"name"`
+	URL  string `yaml:"url"`
 }
 
 func LoadConfiguration(path string) (*Configuration, error) {

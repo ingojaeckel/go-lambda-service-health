@@ -8,10 +8,28 @@ import (
 	"github.com/ingojaeckel/go-lambda-service-health/config"
 )
 
-func CheckResponseTime(configuration *config.Configuration, c ServiceConfiguration, out chan<- TimedResult) {
+type TimedResult struct {
+	Configuration config.ServiceConfiguration
+	Success       bool
+	StatusCode    int
+	TimeNanos     int64
+}
+
+
+func CheckResponseTimes(configuration *config.Configuration) chan TimedResult {
+	resultChannel := make(chan TimedResult, 10)
+
+	for _, s := range configuration.Services {
+		CheckResponseTime(configuration, s, resultChannel)
+	}
+
+	return resultChannel
+}
+
+func CheckResponseTime(configuration *config.Configuration, c config.ServiceConfiguration, out chan<- TimedResult) {
 	log.Printf("checking response time for service %s @ %s\n", c.Name, c.URL)
 
-	timeout := time.Duration(5 * time.Second)
+	timeout := time.Duration(time.Duration(configuration.Timeout) * time.Second)
 	client := http.Client{Timeout: timeout}
 	before := time.Now().UnixNano()
 	resp, err := client.Get(c.URL)

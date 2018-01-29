@@ -22,8 +22,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
-	resultChannel := make(chan status.TimedResult, 10)
-	status.CheckResponseTime(conf, status.ServiceConfiguration{"foo", "https://google.com"}, resultChannel)
+	resultChannel := status.CheckResponseTimes(conf)
 	defer close(resultChannel)
 
 	tr := <-resultChannel

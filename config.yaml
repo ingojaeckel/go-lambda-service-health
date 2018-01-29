@@ -1,10 +1,10 @@
-timeout: 5
+timeout: 1
 region: us-east-1
 s3bucket: all-reports
 s3keyData: measurements
 s3KeyReport: report.html
 services:
   - name: foo
-    url: http://example.com
+    url: https://foo.example.com
   - name: bar
-    url: http://foo.com
+    url: https://bar.example.com
