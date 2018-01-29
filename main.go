@@ -25,11 +25,13 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	reporter := report.Reporter{*conf}
 	if _, err := reporter.GetExistingData(); err != nil {
+		// Continue anyway..
 		log.Printf("Failed to load existing report: %s", err.Error())
 	} else {
 		log.Print("Successful loaded report")
 	}
 
+	log.Println("Starting measurements..")
 	var check report.Check
 	resultChannel := status.CheckResponseTimes(conf)
 
@@ -43,7 +45,14 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	var prevReport report.Report
 
-	reporter.UpdateMeasurements(&prevReport, check)
+	log.Println("Uploading report..")
+	if err := reporter.UpdateMeasurements(&prevReport, check); err != nil {
+		log.Printf("Failed to upload measurements: %s", err.Error())
+		return events.APIGatewayProxyResponse{
+			Body:       fmt.Sprintf("Failed to upload measurements: %s", err.Error()),
+			StatusCode: 500,
+		}, nil
+	}
 
 	return events.APIGatewayProxyResponse{
 		Body:       "OK",
