@@ -7,7 +7,16 @@ import (
 )
 
 type Configuration struct {
+	// Number of seconds to wait for a response from a service
 	Timeout int `yaml:"timeout"`
+	// AWS region of the s3 bucket that is being written to and read from.
+	Region string `yaml:"region"`
+	// The bucket where all data will be stored (measurements and reports)
+	S3Bucket string `yaml:"s3bucket"`
+	// Folder & file name within the s3 bucket where measurements are stored.
+	S3KeyData string `yaml:"s3keyData"`
+	// Folder & file name within the s3 bucket where the report will be stored.
+	S3KeyReport string `yaml:"s3KeyReport"`
 }
 
 func LoadConfiguration(path string) (*Configuration, error) {

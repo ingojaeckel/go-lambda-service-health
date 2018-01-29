@@ -3,13 +3,12 @@ package report
 import (
 	"fmt"
 
+	"github.com/ingojaeckel/go-lambda-service-health/config"
 	"github.com/ingojaeckel/go-lambda-service-health/status"
 )
 
 type Reporter struct {
-	S3Bucket    string
-	S3KeyData   string
-	S3KeyReport string
+	Conf config.Configuration
 }
 
 func (r Reporter) CreateReport(results []status.TimedResult, destination string) {
@@ -31,7 +30,7 @@ func (r Reporter) CreateReport(results []status.TimedResult, destination string)
 
 func (r Reporter) LoadExistingData() {
 	// load data from S3
-	from := fmt.Sprintf("s3//%s/%s", r.S3Bucket, r.S3KeyData)
+	from := fmt.Sprintf("s3//%s/%s", r.Conf.S3Bucket, r.Conf.S3KeyData)
 
 	fmt.Printf("Loading from %s\n", from)
 }
