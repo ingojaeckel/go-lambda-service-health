@@ -15,7 +15,6 @@ type TimedResult struct {
 	TimeNanos     int64
 }
 
-
 func CheckResponseTimes(configuration *config.Configuration) chan TimedResult {
 	resultChannel := make(chan TimedResult, 10)
 

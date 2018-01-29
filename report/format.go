@@ -21,22 +21,6 @@ type Report struct {
 	checks []Check
 }
 
-func (c Check) String() string {
-	return fmt.Sprintf("%d|%s", c.timestamp, merge(c.measurements))
-}
-
-func merge(m []Measurement) string {
-	var s string
-
-	for i, x := range m {
-		s += x.String()
-		if i < len(m)-1 {
-			s += " "
-		}
-	}
-	return s
-}
-
 func parse(reportStr string) (*Report, error) {
 	lines := strings.Split(reportStr, "\n")
 	checks := make([]Check, len(lines))
@@ -78,6 +62,36 @@ func parseInt(str string) int {
 	return int(value)
 }
 
+func (c Report) String() string {
+	return fmt.Sprintf(mergeChecks(c.checks, "\n"))
+}
+
+func (c Check) String() string {
+	return fmt.Sprintf("%d|%s", c.timestamp, mergeMeasurements(c.measurements, " "))
+}
+
 func (c Measurement) String() string {
 	return fmt.Sprintf("%s,%d,%d", c.serviceName, c.responseTime, c.statusCode)
+}
+
+func mergeChecks(checks []Check, glue string) string {
+	var s string
+	for i, x := range checks {
+		s += x.String()
+		if i < len(checks)-1 {
+			s += glue
+		}
+	}
+	return s
+}
+
+func mergeMeasurements(measurements []Measurement, glue string) string {
+	var s string
+	for i, x := range measurements {
+		s += x.String()
+		if i < len(measurements)-1 {
+			s += glue
+		}
+	}
+	return s
 }
