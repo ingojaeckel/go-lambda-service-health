@@ -13,12 +13,9 @@ if [[ $? -eq "0" ]]; then
     echo "Updating function ${FN_NAME} .."
 
     aws lambda update-function-code					\
-        --region ${REGION}					\
-        --function-name ${FN_NAME}				\
-        --zip-file fileb://./${DEPLOYMENT_ARTIFACT}		\
-        --runtime go1.x						\
-        --role arn:aws:iam::${AWS_ACCOUNT_ID}:role/${ROLE} 	\
-        --handler main
+        --region ${REGION}					        \
+        --function-name ${FN_NAME}				    \
+        --zip-file fileb://./${DEPLOYMENT_ARTIFACT}
 else
     echo "Creating function ${FN_NAME}.."
 
