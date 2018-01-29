@@ -33,3 +33,19 @@ func TestReportSerialization(t *testing.T) {
 
 	assert.Equal(t, reportStr, report.String())
 }
+
+func TestParseReport(t *testing.T) {
+	reportStr := `9876543|foo,123,200 bar,456,201
+9876544|foo,123,200 bar,456,201
+9876545|foo,123,200 bar,456,201`
+
+	r, err := parse(reportStr)
+	assert.Nil(t, err)
+	assert.NotNil(t, r)
+
+	assert.Equal(t, 3, len(r.checks))
+	assert.Equal(t, 2, len(r.checks[0].measurements))
+	assert.Equal(t, "bar", r.checks[0].measurements[1].serviceName)
+	assert.Equal(t, 456, r.checks[0].measurements[1].responseTime)
+	assert.Equal(t, 201, r.checks[0].measurements[1].statusCode)
+}
