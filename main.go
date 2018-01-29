@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/ingojaeckel/go-lambda-service-health/config"
+	"github.com/ingojaeckel/go-lambda-service-health/report"
 	"github.com/ingojaeckel/go-lambda-service-health/status"
 )
 
@@ -22,15 +23,27 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
-	resultChannel := status.CheckResponseTimes(conf)
-	defer close(resultChannel)
-
-	tr := <-resultChannel
-	if tr.Success {
-		log.Printf("  UP: %10s %30s @ %4d ms, status: %3d\n", tr.Configuration.Name, tr.Configuration.URL, tr.TimeNanos/1000/1000, tr.StatusCode)
+	reporter := report.Reporter{*conf}
+	if _, err := reporter.GetExistingData(); err != nil {
+		log.Printf("Failed to load existing report: %s", err.Error())
 	} else {
-		log.Printf("DOWN: %10s %30s @ %4d ms, status: %3d\n", tr.Configuration.Name, tr.Configuration.URL, tr.TimeNanos/1000/1000, tr.StatusCode)
+		log.Print("Successful loaded report")
 	}
+
+	var check report.Check
+	resultChannel := status.CheckResponseTimes(conf)
+
+	for tr := range resultChannel {
+		check.Measurements = append(check.Measurements, report.Measurement{
+			ServiceName:  tr.Configuration.Name,
+			ResponseTime: int(tr.TimeNanos / 1000 / 1000),
+			StatusCode:   tr.StatusCode,
+		})
+	}
+
+	var prevReport report.Report
+
+	reporter.UpdateMeasurements(&prevReport, check)
 
 	return events.APIGatewayProxyResponse{
 		Body:       "OK",

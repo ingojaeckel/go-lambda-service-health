@@ -22,6 +22,8 @@ func CheckResponseTimes(configuration *config.Configuration) chan TimedResult {
 		CheckResponseTime(configuration, s, resultChannel)
 	}
 
+	defer close(resultChannel)
+
 	return resultChannel
 }
 

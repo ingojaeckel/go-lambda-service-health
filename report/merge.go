@@ -5,10 +5,10 @@ import (
 	"io"
 	"strings"
 
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"fmt"
 )
 
 func (r Reporter) GetExistingData() (*Report, error) {
@@ -36,12 +36,12 @@ func (r Reporter) GetExistingData() (*Report, error) {
 	return parse(fileContentUnompressed)
 }
 
-func (r Reporter) UpdateMeasurements(prevReport *Report, newData Check) {
+func (r Reporter) UpdateMeasurements(prevReport *Report, newData Check) error {
 	// (1) serialize new measurements, append to existing data
-	prevReport.checks = append(prevReport.checks, newData)
+	prevReport.Checks = append(prevReport.Checks, newData)
 
 	var serializedUncompressed string
-	for _, c := range prevReport.checks {
+	for _, c := range prevReport.Checks {
 		serializedUncompressed += c.String()
 		serializedUncompressed += "\n"
 	}
@@ -61,9 +61,10 @@ func (r Reporter) UpdateMeasurements(prevReport *Report, newData Check) {
 	// (4) Generate report
 	htmlStr := fmt.Sprintf("<html><head><title>Report</title></head><body><h1>the report</h1><pre>%s</pre></body></html>", prevReport.String())
 	// (5) Upload report
-	svc.PutObject(&s3.PutObjectInput{
+	_, err := svc.PutObject(&s3.PutObjectInput{
 		Bucket: &r.Conf.S3Bucket,
 		Key:    &r.Conf.S3KeyReport,
 		Body:   strings.NewReader(htmlStr),
 	})
+	return err
 }

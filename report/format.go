@@ -6,21 +6,6 @@ import (
 	"strings"
 )
 
-type Measurement struct {
-	serviceName  string
-	responseTime int
-	statusCode   int
-}
-
-type Check struct {
-	timestamp    int
-	measurements []Measurement
-}
-
-type Report struct {
-	checks []Check
-}
-
 func parse(reportStr string) (*Report, error) {
 	lines := strings.Split(reportStr, "\n")
 	checks := make([]Check, len(lines))
@@ -49,9 +34,9 @@ func parseMeasurements(mstr string) []Measurement {
 	for i, substr := range substrings {
 		mparts := strings.Split(substr, ",")
 		measurements[i] = Measurement{
-			serviceName:  mparts[0],
-			responseTime: parseInt(mparts[1]),
-			statusCode:   parseInt(mparts[2]),
+			ServiceName:  mparts[0],
+			ResponseTime: parseInt(mparts[1]),
+			StatusCode:   parseInt(mparts[2]),
 		}
 	}
 	return measurements
@@ -63,15 +48,15 @@ func parseInt(str string) int {
 }
 
 func (c Report) String() string {
-	return fmt.Sprintf(mergeChecks(c.checks, "\n"))
+	return fmt.Sprintf(mergeChecks(c.Checks, "\n"))
 }
 
 func (c Check) String() string {
-	return fmt.Sprintf("%d|%s", c.timestamp, mergeMeasurements(c.measurements, " "))
+	return fmt.Sprintf("%d|%s", c.Timestamp, mergeMeasurements(c.Measurements, " "))
 }
 
 func (c Measurement) String() string {
-	return fmt.Sprintf("%s,%d,%d", c.serviceName, c.responseTime, c.statusCode)
+	return fmt.Sprintf("%s,%d,%d", c.ServiceName, c.ResponseTime, c.StatusCode)
 }
 
 func mergeChecks(checks []Check, glue string) string {
