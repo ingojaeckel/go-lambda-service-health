@@ -9,6 +9,7 @@ import (
 	"github.com/ingojaeckel/go-lambda-service-health/config"
 	"github.com/ingojaeckel/go-lambda-service-health/report"
 	"github.com/ingojaeckel/go-lambda-service-health/status"
+	"time"
 )
 
 // Handler Main handler function called by AWS Lambda.
@@ -24,15 +25,17 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	reporter := report.Reporter{*conf}
-	if _, err := reporter.GetExistingData(); err != nil {
+	existingReport, err := reporter.GetExistingData()
+	if err != nil {
 		// Continue anyway..
 		log.Printf("Failed to load existing report: %s", err.Error())
+		existingReport = &report.Report{}
 	} else {
-		log.Print("Successful loaded report")
+		log.Print("Successful loaded report: %v", *existingReport)
 	}
 
 	log.Println("Starting measurements..")
-	var check report.Check
+	check := report.Check{Timestamp: time.Now().Unix()}
 	resultChannel := status.CheckResponseTimes(conf)
 
 	for tr := range resultChannel {
@@ -43,15 +46,9 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		})
 	}
 
-	var prevReport report.Report
-
 	log.Println("Uploading report..")
-	if err := reporter.UpdateMeasurements(&prevReport, check); err != nil {
+	if err := reporter.UpdateMeasurements(existingReport, check); err != nil {
 		log.Printf("Failed to upload measurements: %s", err.Error())
-		return events.APIGatewayProxyResponse{
-			Body:       fmt.Sprintf("Failed to upload measurements: %s", err.Error()),
-			StatusCode: 500,
-		}, nil
 	}
 
 	return events.APIGatewayProxyResponse{

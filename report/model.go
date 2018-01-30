@@ -13,7 +13,7 @@ type Measurement struct {
 }
 
 type Check struct {
-	Timestamp    int
+	Timestamp    int64
 	Measurements []Measurement
 }
 

@@ -49,3 +49,17 @@ func TestParseReport(t *testing.T) {
 	assert.Equal(t, 456, r.Checks[0].Measurements[1].ResponseTime)
 	assert.Equal(t, 201, r.Checks[0].Measurements[1].StatusCode)
 }
+
+func TestParseSingleLine(t *testing.T) {
+	reportStr := `9876543|foo,123,200 bar,456,201
+`
+	r, err := parse(reportStr)
+	assert.Nil(t, err)
+	assert.NotNil(t, r)
+
+	assert.Equal(t, 1, len(r.Checks))
+	assert.Equal(t, 2, len(r.Checks[0].Measurements))
+	assert.Equal(t, "bar", r.Checks[0].Measurements[1].ServiceName)
+	assert.Equal(t, 456, r.Checks[0].Measurements[1].ResponseTime)
+	assert.Equal(t, 201, r.Checks[0].Measurements[1].StatusCode)
+}

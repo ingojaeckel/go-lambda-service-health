@@ -8,14 +8,18 @@ import (
 
 func parse(reportStr string) (*Report, error) {
 	lines := strings.Split(reportStr, "\n")
-	checks := make([]Check, len(lines))
+	checks := make([]Check, 0, len(lines))
 
-	for i, lineStr := range lines {
+	for _, lineStr := range lines {
+		if len(strings.TrimSpace(lineStr)) == 0 {
+			// skip empty line
+			continue
+		}
 		c, err := parseLine(lineStr)
 		if err != nil {
 			return nil, err
 		}
-		checks[i] = c
+		checks = append(checks, c)
 	}
 
 	return &Report{checks}, nil
@@ -24,8 +28,9 @@ func parse(reportStr string) (*Report, error) {
 // 123456789|service1,123,200 service2,true,123,201 service3,123,500 service4,-1,-1    // everything up except service4
 func parseLine(lineStr string) (Check, error) {
 	columns := strings.Split(lineStr, "|")
+	ts, _ := strconv.ParseInt(columns[0], 10, 32)
 
-	return Check{parseInt(columns[0]), parseMeasurements(columns[1])}, nil
+	return Check{ts, parseMeasurements(columns[1])}, nil
 }
 
 func parseMeasurements(mstr string) []Measurement {
