@@ -7,16 +7,16 @@ type Reporter struct {
 }
 
 type Measurement struct {
-	ServiceName  string
-	ResponseTime int
-	StatusCode   int
+	ServiceName  string `json:"s"`
+	ResponseTime int    `json:"t"`
+	StatusCode   int    `json:"st"`
 }
 
 type Check struct {
-	Timestamp    int64
-	Measurements []Measurement
+	Timestamp    int64         `json:"ts"`
+	Measurements []Measurement `json:"d"`
 }
 
 type Report struct {
-	Checks []Check
+	Checks []Check `json:"checks"`
 }

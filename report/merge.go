@@ -5,11 +5,11 @@ import (
 	"io"
 	"strings"
 
-	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"log"
 )
 
 func (r Reporter) GetExistingData() (*Report, error) {
@@ -49,7 +49,6 @@ func (r Reporter) UpdateMeasurements(prevReport *Report, newData Check) error {
 		serializedUncompressed += c.String()
 		serializedUncompressed += "\n"
 	}
-
 	// (2) compress - TODO
 	serializedCompressed := serializedUncompressed
 
@@ -65,7 +64,7 @@ func (r Reporter) UpdateMeasurements(prevReport *Report, newData Check) error {
 	})
 
 	// (4) Generate report
-	htmlStr := fmt.Sprintf("<html><head><title>Report</title></head><body><h1>the report</h1><pre>%s</pre></body></html>", prevReport.String())
+	htmlStr := GenerateReport(*prevReport)
 	log.Printf("Uploading report to bucket=%s, key=%s, region=%s, body=%s\n", r.Conf.S3Bucket, r.Conf.S3KeyReport, r.Conf.Region, htmlStr)
 	// (5) Upload report
 	_, err := svc.PutObject(&s3.PutObjectInput{
