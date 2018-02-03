@@ -3,9 +3,8 @@ package report
 import (
 	"bytes"
 	"io"
-	"strings"
-
 	"log"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -53,25 +52,27 @@ func (r Reporter) UpdateMeasurements(prevReport *Report, newData Check) error {
 	serializedCompressed := serializedUncompressed
 
 	// (3) upload measurements
-	log.Printf("Uploading data to bucket=%s, key=%s, region=%s, body=%s\n", r.Conf.S3Bucket, r.Conf.S3KeyData, r.Conf.Region, serializedCompressed)
+	log.Printf("Uploading data to s3://%s/%s [%s]\n", r.Conf.S3Bucket, r.Conf.S3KeyData, r.Conf.Region)
 	sess := session.New()
 	svc := s3.New(sess, aws.NewConfig().WithRegion(r.Conf.Region))
 	svc.PutObject(&s3.PutObjectInput{
-		Bucket: aws.String(r.Conf.S3Bucket),
-		Key:    aws.String(r.Conf.S3KeyData),
-		Body:   strings.NewReader(serializedCompressed),
-		ACL:    aws.String(s3.ObjectCannedACLPublicRead),
+		Bucket:      aws.String(r.Conf.S3Bucket),
+		Key:         aws.String(r.Conf.S3KeyData),
+		Body:        strings.NewReader(serializedCompressed),
+		ACL:         aws.String(s3.ObjectCannedACLPublicRead),
+		ContentType: "text/plain",
 	})
 
 	// (4) Generate report
 	htmlStr := GenerateReport(*prevReport)
-	log.Printf("Uploading report to bucket=%s, key=%s, region=%s, body=%s\n", r.Conf.S3Bucket, r.Conf.S3KeyReport, r.Conf.Region, htmlStr)
+	log.Printf("Uploading report to s3://%s/%s [%s]\n", r.Conf.S3Bucket, r.Conf.S3KeyReport, r.Conf.Region)
 	// (5) Upload report
 	_, err := svc.PutObject(&s3.PutObjectInput{
-		Bucket: aws.String(r.Conf.S3Bucket),
-		Key:    aws.String(r.Conf.S3KeyReport),
-		Body:   strings.NewReader(htmlStr),
-		ACL:    aws.String(s3.ObjectCannedACLPublicRead),
+		Bucket:      aws.String(r.Conf.S3Bucket),
+		Key:         aws.String(r.Conf.S3KeyReport),
+		Body:        strings.NewReader(htmlStr),
+		ACL:         aws.String(s3.ObjectCannedACLPublicRead),
+		ContentType: "text/html",
 	})
 	return err
 }
