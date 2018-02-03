@@ -17,7 +17,7 @@ func TestGenerateReport(t *testing.T) {
 
 	report := Report{Checks: []Check{c1, c2, c3}}
 
-	fmt.Println(GenerateReport(report))
+	fmt.Println(GenerateReport(report, time.Now().Add(-24 * time.Hour)))
 }
 
 func TestConvertTimes(t *testing.T) {

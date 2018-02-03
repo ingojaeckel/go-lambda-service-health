@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"time"
 )
 
 func (r Reporter) GetExistingData() (*Report, error) {
@@ -63,7 +64,9 @@ func (r Reporter) UpdateMeasurements(prevReport *Report, newData Check) error {
 	})
 
 	// (4) Generate report
-	htmlStr := GenerateReport(*prevReport)
+	maxAge := time.Now().Add(-1 * time.Duration(r.Conf.RetainDataForSeconds) * time.Second)
+
+	htmlStr := GenerateReport(*prevReport, maxAge)
 	log.Printf("Uploading report to s3://%s/%s [%s]\n", r.Conf.S3Bucket, r.Conf.S3KeyReport, r.Conf.Region)
 	// (5) Upload report
 	_, err := svc.PutObject(&s3.PutObjectInput{

@@ -6,21 +6,23 @@ import (
 	"time"
 )
 
-func GenerateReport(r Report) string {
-	tsBytes, _ := json.Marshal(convertToTimeSeries(r.Checks))
+func GenerateReport(r Report, maxAge time.Time) string {
+	tsBytes, _ := json.Marshal(convertToTimeSeries(r.Checks, maxAge))
 	return fmt.Sprintf(htmlTemplate, string(tsBytes))
 }
 
-func convertToTimeSeries(checks []Check) []TimeSeries {
+func convertToTimeSeries(checks []Check, maxAge time.Time) []TimeSeries {
 	serviceCount := len(checks[0].Measurements)
 	ts := make([]TimeSeries, serviceCount)
 
 	for i := 0; i < serviceCount; i++ {
 		ts[i] = TimeSeries{Type: "scatter"}
 		for _, c := range checks {
-			ts[i].Name = c.Measurements[i].ServiceName
-			ts[i].X = append(ts[i].X, convertTimestamp(c.Timestamp))
-			ts[i].Y = append(ts[i].Y, c.Measurements[i].ResponseTime)
+			if time.Unix(c.Timestamp, 0).After(maxAge) {
+				ts[i].Name = c.Measurements[i].ServiceName
+				ts[i].X = append(ts[i].X, convertTimestamp(c.Timestamp))
+				ts[i].Y = append(ts[i].Y, c.Measurements[i].ResponseTime)
+			}
 		}
 	}
 	return ts
