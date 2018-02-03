@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"log"
 )
 
 func parse(reportStr string) (*Report, error) {
@@ -38,6 +39,10 @@ func parseMeasurements(mstr string) []Measurement {
 	measurements := make([]Measurement, len(substrings))
 	for i, substr := range substrings {
 		mparts := strings.Split(substr, ",")
+		if len(mparts) != 3 {
+			log.Printf("Failed to parse measurement: '%s'. Skipping.\n", substr)
+			continue
+		}
 		measurements[i] = Measurement{
 			ServiceName:  mparts[0],
 			ResponseTime: parseInt(mparts[1]),

@@ -28,13 +28,12 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	existingReport, err := reporter.GetExistingData()
 	if err != nil {
 		// Continue anyway..
-		log.Printf("Failed to load existing report: %s", err.Error())
+		log.Printf("Failed to load existing report: %s\n", err.Error())
 		existingReport = &report.Report{}
 	} else {
-		log.Print("Successful loaded report: %v", *existingReport)
+		log.Println("Successfully loaded report.")
 	}
 
-	log.Println("Starting measurements..")
 	check := report.Check{Timestamp: time.Now().Unix()}
 	resultChannel := status.CheckResponseTimes(conf)
 

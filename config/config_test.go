@@ -14,12 +14,12 @@ func TestConfigurationNonNil(t *testing.T) {
 
 func TestConfigurationTimeout(t *testing.T) {
 	c, _ := LoadConfiguration("../config.yaml")
-	assert.Equal(t, 1, c.Timeout)
+	assert.Equal(t, 500, c.TimeoutMilliseconds)
 }
 
 func TestConfigurationServices(t *testing.T) {
 	c, _ := LoadConfiguration("../config.yaml")
-	assert.Equal(t, 2, len(c.Services))
+	assert.True(t, len(c.Services) >= 2)
 
 	assert.True(t, len(c.Services[0].Name) > 0)
 	assert.True(t, len(c.Services[0].URL) > 0)

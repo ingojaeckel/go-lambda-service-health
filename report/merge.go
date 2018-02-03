@@ -34,7 +34,6 @@ func (r Reporter) GetExistingData() (*Report, error) {
 	fileContentCompressed := buf.Bytes()
 	// (2) uncompress - TODO
 	fileContentUncompressed := string(fileContentCompressed)
-	log.Printf("Loaded existing data: %s\n", fileContentUncompressed)
 	// (3) parse
 	return parse(fileContentUncompressed)
 }
@@ -60,7 +59,7 @@ func (r Reporter) UpdateMeasurements(prevReport *Report, newData Check) error {
 		Key:         aws.String(r.Conf.S3KeyData),
 		Body:        strings.NewReader(serializedCompressed),
 		ACL:         aws.String(s3.ObjectCannedACLPublicRead),
-		ContentType: "text/plain",
+		ContentType: aws.String("text/plain"),
 	})
 
 	// (4) Generate report
@@ -72,7 +71,7 @@ func (r Reporter) UpdateMeasurements(prevReport *Report, newData Check) error {
 		Key:         aws.String(r.Conf.S3KeyReport),
 		Body:        strings.NewReader(htmlStr),
 		ACL:         aws.String(s3.ObjectCannedACLPublicRead),
-		ContentType: "text/html",
+		ContentType: aws.String("text/html"),
 	})
 	return err
 }

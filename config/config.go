@@ -9,8 +9,10 @@ import (
 )
 
 type Configuration struct {
-	// Number of seconds to wait for a response from a service
-	Timeout int `yaml:"timeout"`
+	// Number of seconds to retain data for in the generated report. E.g. 86400 will retain data from the last 24h.
+	RetainDataForSeconds int `yaml:"retainDataForSeconds"`
+	// Number of milliseconds to wait for a response from a service.
+	TimeoutMilliseconds int `yaml:"timeoutMilliseconds"`
 	// AWS region of the s3 bucket that is being written to and read from.
 	Region string `yaml:"region"`
 	// The bucket where all data will be stored (measurements and reports)
@@ -19,7 +21,7 @@ type Configuration struct {
 	S3KeyData string `yaml:"s3keyData"`
 	// Folder & file name within the s3 bucket where the report will be stored.
 	S3KeyReport string `yaml:"s3KeyReport"`
-
+	// List of services which should be health-checked.
 	Services []ServiceConfiguration `yaml:"services"`
 }
 

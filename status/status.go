@@ -30,8 +30,7 @@ func CheckResponseTimes(configuration *config.Configuration) chan TimedResult {
 func CheckResponseTime(configuration *config.Configuration, c config.ServiceConfiguration, out chan<- TimedResult) {
 	log.Printf("checking response time for service %s @ %s\n", c.Name, c.URL)
 
-	timeout := time.Duration(time.Duration(configuration.Timeout) * time.Second)
-	client := http.Client{Timeout: timeout}
+	client := http.Client{Timeout: time.Duration(configuration.TimeoutMilliseconds) * time.Millisecond}
 	before := time.Now().UnixNano()
 	resp, err := client.Get(c.URL)
 	timeNanos := time.Now().UnixNano() - before
