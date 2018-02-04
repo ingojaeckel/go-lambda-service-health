@@ -1,8 +1,9 @@
-timeout: 1
 region: us-east-1
 s3bucket: all-reports
 s3keyData: measurements
 s3KeyReport: report.html
+timeoutMilliseconds: 500
+retainDataForSeconds: 86400
 services:
   - name: foo
     url: https://foo.example.com
