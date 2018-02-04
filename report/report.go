@@ -14,15 +14,23 @@ func GenerateReport(r Report, maxAge time.Time) string {
 func convertToTimeSeries(checks []Check, maxAge time.Time) []TimeSeries {
 	serviceCount := len(checks[0].Measurements)
 	ts := make([]TimeSeries, serviceCount)
+	timestampsToSkip := 0
+
+	for _, c := range checks {
+		if time.Unix(c.Timestamp, 0).Before(maxAge) {
+			timestampsToSkip++
+		}
+	}
 
 	for i := 0; i < serviceCount; i++ {
 		ts[i] = TimeSeries{Type: "scatter"}
-		for _, c := range checks {
-			if time.Unix(c.Timestamp, 0).After(maxAge) {
-				ts[i].Name = c.Measurements[i].ServiceName
-				ts[i].X = append(ts[i].X, convertTimestamp(c.Timestamp))
-				ts[i].Y = append(ts[i].Y, c.Measurements[i].ResponseTime)
+		for checkIndex, c := range checks {
+			if checkIndex < timestampsToSkip {
+				continue
 			}
+			ts[i].Name = c.Measurements[i].ServiceName
+			ts[i].X = append(ts[i].X, convertTimestamp(c.Timestamp))
+			ts[i].Y = append(ts[i].Y, c.Measurements[i].ResponseTime)
 		}
 	}
 	return ts

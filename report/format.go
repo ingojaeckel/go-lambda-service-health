@@ -2,9 +2,9 @@ package report
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
-	"log"
 )
 
 func parse(reportStr string) (*Report, error) {
